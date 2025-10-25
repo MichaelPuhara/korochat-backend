@@ -6,3 +6,10 @@
 *.pem
 *.key
 *.p12
+.env
+.env.*
+.DS_Store
+.venv/
+*.pem
+*.key
+*.p12
