@@ -1,2 +1,8 @@
 .env
 .DS_Store
+.env
+.env.*
+.DS_Store
+*.pem
+*.key
+*.p12
