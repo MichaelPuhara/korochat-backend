@@ -1,5 +1,8 @@
+#python3 -m venv .venv
+#source .venv/bin/activate
 # uvicorn main:app
 # uvicorn main:app --reload
+#yarn dev
 
 # Main Imports
 from fastapi import FastAPI, File, UploadFile, HTTPException
@@ -24,6 +27,9 @@ origins = [
     "http://localhost:4173",
     "http://localhost:4174",
     "http://localhost:3000",
+    "https://chat.kahuco.de",
+    "https://kahuco.de",
+    "https://*.vercel.app",  # For Vercel preview deployments
 ]
 
 # CORS - Middleware

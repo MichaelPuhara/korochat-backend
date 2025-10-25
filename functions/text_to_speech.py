@@ -17,11 +17,16 @@ def convert_text_to_speech(message):
     }
 
     # Define voice
-    voice_rachel = "21m00Tcm4TlvDq8ikWAM"
+    #voice_rachel = "21m00Tcm4TlvDq8ikWAM"
+    #voice_Adam = "pNInz6obpgDQGcFmaJgB"
+    voice_Koro = "cwdmeUHVFO9BmZhUar4w"
 
     # Construct Headers and Endpoint
     headers = {"xi-api-key": ELEVEN_LABS_API_KEY, "Content-Type": "application/json", "accept": "audio/mpeg"}
-    endpoint = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_rachel}"
+    #endpoint = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_rachel}"
+    #endpoint = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_Adam}"
+    endpoint = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_Koro}"
+    #endpoint = f"https://elevenlabs.io/app/voice-lab/share/f9a765fd0efb8523f176da6c13d82e188316e76809f5cc15b15c1dde757d5eed/cwdmeUHVFO9BmZhUar4w"
 
     # Send request
     try:
@@ -50,3 +55,6 @@ def convert_text_to_speech(message):
 #if audio_data:
    #with open("output.mp3", "wb") as audio_file:
        #audio_file.write(audio_data)
+
+
+       

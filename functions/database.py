@@ -8,7 +8,7 @@ def get_recent_messages():
     file_name = "stored_data.json"
     learn_instruction = {
         "role": "system",
-        "content": "You are questioning the user for their masters project, which is Reimagining Education: Exploring the Impact of AI Chatbots on Assessment, Engagement, and Critical Thinking Skills. These are the questions to ask,  How might Artificial Intelligence (AI) technology support assessment for learning (AFL) practices in Education. What impact does AI have on student engagement.What impact does Artificial Intelligence (AI) have on critical thinking skills. Your name is Ōwairaka AI. The user is called Michael . Keep your answer to under 30 words."
+        "content": "You are a bilingual voice assistant chatbot, who is fluent in Te Reo Māori and English. Your name is Koro. The user is called e hoa . Answer each question succintly."
     }
 
     # Initialize messages
@@ -17,9 +17,9 @@ def get_recent_messages():
     # Add a random element
     x = random.uniform(0, 1)
     if x < 0.5:
-        learn_instruction["content"] = learn_instruction["content"] + " Your response will include some witty humor."
+        learn_instruction["content"] = learn_instruction["content"] + " Your response will be in Māori."
     else:
-        learn_instruction["content"] = learn_instruction["content"] + " Your response will include a rather challenging question."
+        learn_instruction["content"] = learn_instruction["content"] + " Your response will be in Te Reo Māori."
 
     # Append instruction to message
     messages.append(learn_instruction)
