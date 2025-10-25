@@ -29,6 +29,7 @@ origins = [
     "http://localhost:3000",
     "https://chat.kahuco.de",
     "https://kahuco.de",
+    "https://www.kahuco.de",
     "https://*.vercel.app",  # For Vercel preview deployments
 ]
 
@@ -39,6 +40,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["Content-Range", "Accept-Ranges", "Content-Length", "Content-Type"],
 )
 
 # Check Health
@@ -56,10 +58,6 @@ async def reset_conversation():
 @app.post("/post-audio")
 async def post_audio(file: UploadFile = File(...)):
 
-
-    # Get saved audio
-    #audio_input = open("voice.mp3", "rb")
-
     # Save file from Frontend
     with open(file.filename, "wb") as buffer:
         buffer.write(file.file.read())
@@ -69,15 +67,13 @@ async def post_audio(file: UploadFile = File(...)):
     message_decoded = convert_audio_to_text(audio_input)
 
     if not message_decoded:
-        return HTTPException(status_code=400, detail="Failed to get Eleven Labs audio response")
+        raise HTTPException(status_code=400, detail="Failed to decode audio")
     
     # Get ChatGPT response
     chat_response = get_chat_response(message_decoded)
 
-     # Guard: Ensure message decoded
-
     if not chat_response:
-        return HTTPException(status_code=400, detail="Failed to get chat response")
+        raise HTTPException(status_code=400, detail="Failed to get chat response")
 
     # Store messages
     store_messages(message_decoded, chat_response)
@@ -85,33 +81,21 @@ async def post_audio(file: UploadFile = File(...)):
     # Convert chat response to audio
     audio_output = convert_text_to_speech(chat_response)
 
-    # Guard: Ensure message decoded
-
     if not audio_output:
-        return HTTPException(status_code=400, detail="Failed to get Eleven Labs audio response")
+        raise HTTPException(status_code=400, detail="Failed to get audio response")
     
-     # Create a generator that yields chunks of data
+    # Create a generator that yields chunks of data
     def iterfile():
         yield audio_output
 
-            # Return audio file in chunks
-    def iterfile():
-        yield audio_output
-
-    return StreamingResponse(iterfile(), media_type="application/octet-stream")
-
-
-
-    #return "Done"
-    
-
-
-    
-
-
-
-
-
-
-
-  
+    # Return audio with iOS Safari compatible headers
+    return StreamingResponse(
+        iterfile(), 
+        media_type="audio/mpeg",
+        headers={
+            "Content-Disposition": "inline",
+            "Accept-Ranges": "bytes",
+            "Content-Type": "audio/mpeg",
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+        }
+    )

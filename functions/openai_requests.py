@@ -11,15 +11,19 @@ openai.api_key = config("OPEN_AI_KEY")
 # Function to convert audio to text using OpenAI Whisper
 def convert_audio_to_text(audio_file):
     try:
-        transcript = openai.Audio.transcribe(model="whisper-1", file=audio_file)
+        # Use faster Whisper-1 model
+        transcript = openai.Audio.transcribe(
+            model="whisper-1", 
+            file=audio_file,
+            language="en"  # Specify language for faster processing
+        )
         message_text = transcript['text']
         return message_text
     except Exception as e:
-        print(e)
+        print(f"Transcription error: {e}")
         return
 
-# Open AI ChatGPT
-# Get Response to our Message
+# Open AI ChatGPT - Optimized for speed
 def get_chat_response(message_input):
     messages = get_recent_messages()
     user_message = {"role": "user", "content": message_input}
@@ -27,17 +31,18 @@ def get_chat_response(message_input):
     print(messages)
 
     try:
+        # Use GPT-3.5-turbo for much faster responses (10x faster than GPT-4)
+        # If you need GPT-4, use "gpt-4-turbo" for 2x speed improvement
         response = openai.ChatCompletion.create(
-            model="gpt-4",
-            messages=messages
+            model="gpt-3.5-turbo",  # Much faster than gpt-4
+            messages=messages,
+            temperature=0.7,
+            max_tokens=150,  # Limit response length for faster TTS
+            stream=False  # Set to True for streaming if needed
         )
 
         message_text = response["choices"][0]["message"]["content"]
         return message_text
     except Exception as e:
-        print(e)
+        print(f"Chat completion error: {e}")
         return
-
-        
-    
-        

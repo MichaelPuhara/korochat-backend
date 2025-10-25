@@ -4,34 +4,42 @@ from decouple import config
 # Load the API key from environment variables using decouple
 ELEVEN_LABS_API_KEY = config("ELEVEN_LABS_API_KEY")
 
-# Eleven Labs - Convert Text to Speech
+# Eleven Labs - Convert Text to Speech (Optimized for speed)
 def convert_text_to_speech(message):
 
-    # Define Data (Body)
+    # Define Data (Body) - Optimized settings for faster generation
     body = {
         "text": message,
         "voice_settings": {
-            "stability": 0,
-            "similarity_boost": 0
-        }
+            "stability": 0.5,  # Balanced for speed and quality
+            "similarity_boost": 0.5
+        },
+        "model_id": "eleven_turbo_v2"  # Use fastest model
     }
 
-    # Define voice
-    #voice_rachel = "21m00Tcm4TlvDq8ikWAM"
-    #voice_Adam = "pNInz6obpgDQGcFmaJgB"
+    # Define voice - Koro
     voice_Koro = "cwdmeUHVFO9BmZhUar4w"
 
     # Construct Headers and Endpoint
-    headers = {"xi-api-key": ELEVEN_LABS_API_KEY, "Content-Type": "application/json", "accept": "audio/mpeg"}
-    #endpoint = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_rachel}"
-    #endpoint = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_Adam}"
+    headers = {
+        "xi-api-key": ELEVEN_LABS_API_KEY, 
+        "Content-Type": "application/json", 
+        "accept": "audio/mpeg"
+    }
     endpoint = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_Koro}"
-    #endpoint = f"https://elevenlabs.io/app/voice-lab/share/f9a765fd0efb8523f176da6c13d82e188316e76809f5cc15b15c1dde757d5eed/cwdmeUHVFO9BmZhUar4w"
 
-    # Send request
+    # Send request with timeout for faster failure
     try:
-        response = requests.post(endpoint, json=body, headers=headers)
-        response.raise_for_status()  # Raise an exception for HTTP errors
+        response = requests.post(
+            endpoint, 
+            json=body, 
+            headers=headers,
+            timeout=10  # 10 second timeout
+        )
+        response.raise_for_status()
+    except requests.exceptions.Timeout:
+        print("Error: Request timed out")
+        return None
     except requests.exceptions.RequestException as e:
         print(f"Error: {e}")
         return None
@@ -40,21 +48,5 @@ def convert_text_to_speech(message):
     if response.status_code == 200:
         return response.content
     else:
-        return
-
-# Example usage:
-# audio_data = convert_text_to_speech("Hello, this is a test.")
-# if audio_data:
-#     with open("output.mp3", "wb") as audio_file:
-#         audio_file.write(audio_data)
-
-
-
-# Example usage:
-#audio_data = convert_text_to_speech("Hello, this is a test.")
-#if audio_data:
-   #with open("output.mp3", "wb") as audio_file:
-       #audio_file.write(audio_data)
-
-
-       
+        print(f"Error: Received status code {response.status_code}")
+        return None
